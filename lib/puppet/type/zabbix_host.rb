@@ -24,7 +24,33 @@ Puppet::Type.newtype(:zabbix_host) do
     validate do |val|
       fail("group must be a string #{val.inspect}") unless val =~ /^[A-Za-z\s]+$/
     end
+    
+    # We overide the default method, because we can get the is and should in arbitrary order, and we want to sort them before comparing
+    def insync?(is)
+     # The current value may be nil and we don't
+     # want to call sort on it so make sure we have arrays
+     if is.is_a?(Array) and @should.is_a?(Array)
+      is.sort == @should.sort
+     else
+      is == @should
+     end
+    end
   end
+
+  newproperty(:templates, :array_matching => :all) do
+    desc "templates this host is a linked to"
+    # We overide the default method, because we can get the is and should in arbitrary order, and we want to sort them before comparing
+    def insync?(is)
+     # The current value may be nil and we don't
+     # want to call sort on it so make sure we have arrays
+     if is.is_a?(Array) and @should.is_a?(Array)
+      is.sort == @should.sort
+     else
+      is == @should
+     end
+    end
+  end
+
 
 #  newproperty(:dnsname) do
 #    desc "dnsname of the thing"

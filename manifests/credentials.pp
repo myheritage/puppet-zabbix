@@ -1,9 +1,11 @@
 class zabbix::credentials (
   $username = 'Admin',
-  $password = 'zabbix',
-  $zabbixhost = '127.0.0.1'
+  $zabbixhost = '127.0.0.1',
+  $url = undef,
+  $use_ssl = true
 ) {
-
+  $password = hiera("zabbix-${username}")
+  if !$password { fail "Could not find password for ${username}" }
   file { '/root/.zabbix':
     ensure => file,
     owner  => 'root',
